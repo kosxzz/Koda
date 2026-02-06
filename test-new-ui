@@ -1,0 +1,315 @@
+-- Advanced Modern Roblox UI Library
+-- Author: Acx (example)
+-- Usage: local UI = Library:CreateWindow("Game Title", "Subtitle")
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local Library = {}
+Library.__index = Library
+
+-- Utility functions
+local function createInstance(class, props)
+    local inst = Instance.new(class)
+    for i,v in pairs(props) do
+        inst[i] = v
+    end
+    return inst
+end
+
+local function tween(inst, props, duration)
+    TweenService:Create(inst, TweenInfo.new(duration or 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
+end
+
+-- Notifications
+function Library:Notify(text, duration)
+    duration = duration or 3
+    local notif = createInstance("Frame", {
+        Size = UDim2.new(0, 300, 0, 50),
+        Position = UDim2.new(0.5, -150, 0.1, 0),
+        BackgroundColor3 = Color3.fromRGB(30,30,30),
+        BorderSizePixel = 0,
+        Parent = self.NotifFolder,
+        ClipsDescendants = true
+    })
+
+    local label = createInstance("TextLabel", {
+        Size = UDim2.new(1, -10, 1, -10),
+        Position = UDim2.new(0, 5, 0, 5),
+        BackgroundTransparency = 1,
+        Text = text,
+        TextColor3 = Color3.fromRGB(255,255,255),
+        TextScaled = true,
+        Font = Enum.Font.Gotham,
+        Parent = notif
+    })
+
+    tween(notif, {Position = UDim2.new(0.5, -150, 0.1, 50)}, 0.3)
+    delay(duration, function()
+        tween(notif, {Position = UDim2.new(0.5, -150, 0.1, -50)}, 0.3)
+        wait(0.3)
+        notif:Destroy()
+    end)
+end
+
+-- Create main window
+function Library:CreateWindow(title, subtitle)
+    local selfInstance = {}
+    setmetatable(selfInstance, Library)
+
+    -- ScreenGui
+    local screenGui = createInstance("ScreenGui", {
+        Name = "ModernUI",
+        ResetOnSpawn = false,
+        Parent = PlayerGui
+    })
+
+    -- Notification folder
+    local notifFolder = createInstance("Folder", {Name = "Notifications", Parent = screenGui})
+    selfInstance.NotifFolder = notifFolder
+
+    -- Main frame
+    local mainFrame = createInstance("Frame", {
+        Size = UDim2.new(0, 600, 0, 400),
+        Position = UDim2.new(0.5, -300, 0.5, -200),
+        BackgroundColor3 = Color3.fromRGB(20,20,20),
+        BorderSizePixel = 0,
+        Parent = screenGui
+    })
+
+    -- UI Corner
+    createInstance("UICorner", {CornerRadius = UDim.new(0,12), Parent = mainFrame})
+
+    -- Title
+    local titleLabel = createInstance("TextLabel", {
+        Size = UDim2.new(1,0,0,50),
+        BackgroundTransparency = 1,
+        Text = title,
+        TextColor3 = Color3.fromRGB(255,255,255),
+        Font = Enum.Font.GothamBold,
+        TextScaled = true,
+        Parent = mainFrame
+    })
+
+    -- Subtitle
+    local subtitleLabel = createInstance("TextLabel", {
+        Size = UDim2.new(1,0,0,30),
+        Position = UDim2.new(0,0,0,50),
+        BackgroundTransparency = 1,
+        Text = subtitle,
+        TextColor3 = Color3.fromRGB(180,180,180),
+        Font = Enum.Font.Gotham,
+        TextScaled = true,
+        Parent = mainFrame
+    })
+
+    -- Tabs container
+    local tabsFrame = createInstance("Frame", {
+        Size = UDim2.new(1,0,1,-80),
+        Position = UDim2.new(0,0,0,80),
+        BackgroundTransparency = 1,
+        Parent = mainFrame
+    })
+    selfInstance.TabsFrame = tabsFrame
+
+    selfInstance.Tabs = {}
+
+    return selfInstance
+end
+
+-- Add a tab
+function Library:AddTab(tabName)
+    local tab = {}
+    tab.Name = tabName
+    tab.Sections = {}
+
+    local tabFrame = createInstance("Frame", {
+        Size = UDim2.new(1,0,1,0),
+        BackgroundTransparency = 1,
+        Visible = true,
+        Parent = self.TabsFrame
+    })
+    tab.Frame = tabFrame
+
+    self.Tabs[tabName] = tab
+    return tab
+end
+
+-- Add a section
+function Library:AddSection(tab, sectionName)
+    local section = {}
+    section.Name = sectionName
+
+    local frame = createInstance("Frame", {
+        Size = UDim2.new(1, -20, 0, 100),
+        BackgroundColor3 = Color3.fromRGB(35,35,35),
+        Position = UDim2.new(0,10,0,10),
+        Parent = tab.Frame
+    })
+    createInstance("UICorner", {CornerRadius = UDim.new(0,10), Parent = frame})
+
+    local layout = createInstance("UIListLayout", {
+        Padding = UDim.new(0,5),
+        FillDirection = Enum.FillDirection.Vertical,
+        HorizontalAlignment = Enum.HorizontalAlignment.Center,
+        VerticalAlignment = Enum.VerticalAlignment.Top,
+        Parent = frame
+    })
+
+    section.Frame = frame
+    tab.Sections[sectionName] = section
+    return section
+end
+
+-- Add a button
+function Library:AddButton(section, text, callback)
+    local btn = createInstance("TextButton", {
+        Size = UDim2.new(1, -10, 0, 35),
+        BackgroundColor3 = Color3.fromRGB(70,70,70),
+        Text = text,
+        TextColor3 = Color3.fromRGB(255,255,255),
+        Font = Enum.Font.Gotham,
+        TextScaled = true,
+        Parent = section.Frame
+    })
+    createInstance("UICorner", {CornerRadius = UDim.new(0,6), Parent = btn})
+    btn.MouseButton1Click:Connect(callback)
+    return btn
+end
+
+-- Add a toggle
+function Library:AddToggle(section, text, default, callback)
+    local toggled = default or false
+    local frame = createInstance("Frame", {
+        Size = UDim2.new(1, -10, 0, 35),
+        BackgroundColor3 = Color3.fromRGB(50,50,50),
+        Parent = section.Frame
+    })
+    createInstance("UICorner", {CornerRadius = UDim.new(0,6), Parent = frame})
+
+    local label = createInstance("TextLabel", {
+        Size = UDim2.new(0.8,0,1,0),
+        BackgroundTransparency = 1,
+        Text = text,
+        TextColor3 = Color3.fromRGB(255,255,255),
+        Font = Enum.Font.Gotham,
+        TextScaled = true,
+        Parent = frame
+    })
+
+    local toggleBtn = createInstance("TextButton", {
+        Size = UDim2.new(0.2, -5, 0.8, 0),
+        Position = UDim2.new(0.8,5,0.1,0),
+        BackgroundColor3 = toggled and Color3.fromRGB(0,200,0) or Color3.fromRGB(150,150,150),
+        Text = "",
+        Parent = frame
+    })
+    createInstance("UICorner", {CornerRadius = UDim.new(0,4), Parent = toggleBtn})
+
+    toggleBtn.MouseButton1Click:Connect(function()
+        toggled = not toggled
+        toggleBtn.BackgroundColor3 = toggled and Color3.fromRGB(0,200,0) or Color3.fromRGB(150,150,150)
+        callback(toggled)
+    end)
+
+    return toggleBtn
+end
+
+-- Add a label
+function Library:AddLabel(section, text)
+    local label = createInstance("TextLabel", {
+        Size = UDim2.new(1, -10, 0, 30),
+        BackgroundTransparency = 1,
+        Text = text,
+        TextColor3 = Color3.fromRGB(255,255,255),
+        Font = Enum.Font.Gotham,
+        TextScaled = true,
+        Parent = section.Frame
+    })
+    return label
+end
+
+-- Add a textbox
+function Library:AddTextbox(section, placeholder, callback)
+    local box = createInstance("TextBox", {
+        Size = UDim2.new(1, -10, 0, 35),
+        BackgroundColor3 = Color3.fromRGB(60,60,60),
+        Text = "",
+        PlaceholderText = placeholder,
+        TextColor3 = Color3.fromRGB(255,255,255),
+        Font = Enum.Font.Gotham,
+        TextScaled = true,
+        Parent = section.Frame
+    })
+    createInstance("UICorner", {CornerRadius = UDim.new(0,6), Parent = box})
+    box.FocusLost:Connect(function()
+        callback(box.Text)
+    end)
+    return box
+end
+
+-- Add a dropdown
+function Library:AddDropdown(section, options, callback)
+    local frame = createInstance("Frame", {
+        Size = UDim2.new(1, -10, 0, 35),
+        BackgroundColor3 = Color3.fromRGB(60,60,60),
+        Parent = section.Frame
+    })
+    createInstance("UICorner", {CornerRadius = UDim.new(0,6), Parent = frame})
+
+    local label = createInstance("TextLabel", {
+        Size = UDim2.new(0.7,0,1,0),
+        BackgroundTransparency = 1,
+        Text = "Select",
+        TextColor3 = Color3.fromRGB(255,255,255),
+        Font = Enum.Font.Gotham,
+        TextScaled = true,
+        Parent = frame
+    })
+
+    local dropdownBtn = createInstance("TextButton", {
+        Size = UDim2.new(0.3,0,1,0),
+        Position = UDim2.new(0.7,0,0,0),
+        BackgroundColor3 = Color3.fromRGB(100,100,100),
+        Text = "▼",
+        Parent = frame
+    })
+    createInstance("UICorner", {CornerRadius = UDim.new(0,4), Parent = dropdownBtn})
+
+    local dropFrame = createInstance("Frame", {
+        Size = UDim2.new(1,0,0,#options*30),
+        Position = UDim2.new(0,0,1,0),
+        BackgroundColor3 = Color3.fromRGB(50,50,50),
+        Visible = false,
+        Parent = frame
+    })
+    createInstance("UICorner", {CornerRadius = UDim.new(0,6), Parent = dropFrame})
+
+    for i,opt in pairs(options) do
+        local btn = createInstance("TextButton", {
+            Size = UDim2.new(1,0,0,30),
+            Position = UDim2.new(0,0,(i-1)*30,0),
+            BackgroundColor3 = Color3.fromRGB(70,70,70),
+            Text = opt,
+            TextColor3 = Color3.fromRGB(255,255,255),
+            Font = Enum.Font.Gotham,
+            TextScaled = true,
+            Parent = dropFrame
+        })
+        btn.MouseButton1Click:Connect(function()
+            label.Text = opt
+            callback(opt)
+            dropFrame.Visible = false
+        end)
+    end
+
+    dropdownBtn.MouseButton1Click:Connect(function()
+        dropFrame.Visible = not dropFrame.Visible
+    end)
+
+    return frame
+end
+
+return Library
