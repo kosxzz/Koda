@@ -5,10 +5,18 @@ local themes = {
 	index = {'Dark', 'Amethyst', 'RedBlack'},
 	Amethyst = {
 		['Shadow'] = Color3.fromRGB(24, 24, 31),
+		['Shadow Gradient'] = ColorSequence.new{
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(91, 68, 209)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(24, 24, 31))
+		},
 		['Background'] = Color3.fromRGB(29, 28, 38),
 		['Page'] = Color3.fromRGB(24, 24, 31),
 		['Main'] = Color3.fromRGB(91, 68, 209),
 		['Text & Icon'] = Color3.fromRGB(255, 255, 255),
+		['Icon Gradient'] = ColorSequence.new{
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 81, 255)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(91, 68, 209))
+		},
 		['Notify Gradient'] = ColorSequence.new{
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(91, 68, 209)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 81, 255))
@@ -85,10 +93,18 @@ local themes = {
 	},
 	Dark = {
 		['Shadow'] = Color3.fromRGB(15, 15, 15),
+		['Shadow Gradient'] = ColorSequence.new{
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 50, 50)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 15, 15))
+		},
 		['Background'] = Color3.fromRGB(20, 20, 20),
 		['Page'] = Color3.fromRGB(18, 18, 18),
 		['Main'] = Color3.fromRGB(50, 50, 50),
 		['Text & Icon'] = Color3.fromRGB(230, 230, 230),
+		['Icon Gradient'] = ColorSequence.new{
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(200, 200, 200)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 150, 150))
+		},
 		['Notify Gradient'] = ColorSequence.new{
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 50, 50)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(70, 70, 70))
@@ -165,10 +181,18 @@ local themes = {
 	},
 	RedBlack = {
 		['Shadow'] = Color3.fromRGB(10, 0, 0),
+		['Shadow Gradient'] = ColorSequence.new{
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 20, 20)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 0, 0))
+		},
 		['Background'] = Color3.fromRGB(18, 18, 18),
 		['Page'] = Color3.fromRGB(12, 12, 12),
 		['Main'] = Color3.fromRGB(180, 20, 20),
 		['Text & Icon'] = Color3.fromRGB(255, 255, 255),
+		['Icon Gradient'] = ColorSequence.new{
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 40, 40)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 20, 20))
+		},
 		['Notify Gradient'] = ColorSequence.new{
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 20, 20)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 40, 40))
@@ -1170,6 +1194,17 @@ function Library:Window(p)
 
 	addToTheme('Shadow', Shadow_1)
 
+	-- Add gradient to Shadow
+	local ShadowGradient = Instance.new("UIGradient")
+	ShadowGradient.Name = "ShadowGradient"
+	ShadowGradient.Parent = Shadow_1
+	ShadowGradient.Rotation = 90
+	ShadowGradient.Transparency = NumberSequence.new{
+		NumberSequenceKeypoint.new(0, 0.5),
+		NumberSequenceKeypoint.new(1, 0.8)
+	}
+	addToTheme('Shadow Gradient', ShadowGradient, 'Color')
+
 	UIPadding_1.Parent = Shadow_1
 	UIPadding_1.PaddingBottom = UDim.new(0,8)
 	UIPadding_1.PaddingLeft = UDim.new(0,8)
@@ -1285,6 +1320,22 @@ function Library:Window(p)
 
 	addToTheme('Text & Icon', Minisize_1)
 
+	-- Add gradient to Minisize icon
+	local MinisizeGradient = Instance.new("UIGradient")
+	MinisizeGradient.Name = "MinisizeGradient"
+	MinisizeGradient.Parent = Minisize_1
+	MinisizeGradient.Rotation = 90
+	addToTheme('Icon Gradient', MinisizeGradient, 'Color')
+
+	-- Add hover effect to Minisize icon
+	Minisize_1.MouseEnter:Connect(function()
+		tw({v = Minisize_1, t = 0.2, s = Enum.EasingStyle.Quad, d = "Out", g = {ImageColor3 = Color3.fromRGB(255, 40, 40)}}):Play()
+	end)
+	Minisize_1.MouseLeave:Connect(function()
+		local originalColor = IsTheme == 'RedBlack' and Color3.fromRGB(255, 40, 40) or Color3.fromRGB(255, 255, 255)
+		tw({v = Minisize_1, t = 0.2, s = Enum.EasingStyle.Quad, d = "Out", g = {ImageColor3 = originalColor}}):Play()
+	end)
+
 	UIListLayout_6.Parent = Ct_1
 	UIListLayout_6.Padding = UDim.new(0,10)
 	UIListLayout_6.FillDirection = Enum.FillDirection.Horizontal
@@ -1306,6 +1357,22 @@ function Library:Window(p)
 
 	addToTheme('Text & Icon', Close_1)
 
+	-- Add gradient to Close icon
+	local CloseGradient = Instance.new("UIGradient")
+	CloseGradient.Name = "CloseGradient"
+	CloseGradient.Parent = Close_1
+	CloseGradient.Rotation = 90
+	addToTheme('Icon Gradient', CloseGradient, 'Color')
+
+	-- Add hover effect to Close icon
+	Close_1.MouseEnter:Connect(function()
+		tw({v = Close_1, t = 0.2, s = Enum.EasingStyle.Quad, d = "Out", g = {ImageColor3 = Color3.fromRGB(255, 40, 40)}}):Play()
+	end)
+	Close_1.MouseLeave:Connect(function()
+		local originalColor = IsTheme == 'RedBlack' and Color3.fromRGB(255, 40, 40) or Color3.fromRGB(255, 255, 255)
+		tw({v = Close_1, t = 0.2, s = Enum.EasingStyle.Quad, d = "Out", g = {ImageColor3 = originalColor}}):Play()
+	end)
+
 	ChSize_1.Name = "Size"
 	ChSize_1.Parent = Ct_1
 	ChSize_1.Active = true
@@ -1320,6 +1387,22 @@ function Library:Window(p)
 	ChSize_1.ImageColor3 = IsTheme == 'RedBlack' and Color3.fromRGB(255, 40, 40) or Color3.fromRGB(255, 255, 255)
 
 	addToTheme('Text & Icon', ChSize_1)
+
+	-- Add gradient to ChSize icon
+	local ChSizeGradient = Instance.new("UIGradient")
+	ChSizeGradient.Name = "ChSizeGradient"
+	ChSizeGradient.Parent = ChSize_1
+	ChSizeGradient.Rotation = 90
+	addToTheme('Icon Gradient', ChSizeGradient, 'Color')
+
+	-- Add hover effect to ChSize icon
+	ChSize_1.MouseEnter:Connect(function()
+		tw({v = ChSize_1, t = 0.2, s = Enum.EasingStyle.Quad, d = "Out", g = {ImageColor3 = Color3.fromRGB(255, 40, 40)}}):Play()
+	end)
+	ChSize_1.MouseLeave:Connect(function()
+		local originalColor = IsTheme == 'RedBlack' and Color3.fromRGB(255, 40, 40) or Color3.fromRGB(255, 255, 255)
+		tw({v = ChSize_1, t = 0.2, s = Enum.EasingStyle.Quad, d = "Out", g = {ImageColor3 = originalColor}}):Play()
+	end)
 
 	DropdownValue_1.Name = "DropdownValue"
 	DropdownValue_1.Parent = Ct_1
@@ -1409,7 +1492,7 @@ function Library:Window(p)
 	Title_2.Font = Enum.Font.GothamBold
 	Title_2.Text = Title
 	Title_2.TextColor3 = Color3.fromRGB(255,255,255)
-	Title_2.TextSize = 12
+	Title_2.TextSize = 18
 	Title_2.TextXAlignment = Enum.TextXAlignment.Left
 
 	addToTheme('Text & Icon', Title_2)
@@ -4823,6 +4906,17 @@ function Library:Window(p)
 
 			addToTheme('Shadow', CloseUIShadow)
 
+			-- Add gradient to CloseUI Shadow
+			local CloseUIShadowGradient = Instance.new("UIGradient")
+			CloseUIShadowGradient.Name = "CloseUIShadowGradient"
+			CloseUIShadowGradient.Parent = CloseUIShadow
+			CloseUIShadowGradient.Rotation = 90
+			CloseUIShadowGradient.Transparency = NumberSequence.new{
+				NumberSequenceKeypoint.new(0, 0.5),
+				NumberSequenceKeypoint.new(1, 0.8)
+			}
+			addToTheme('Shadow Gradient', CloseUIShadowGradient, 'Color')
+
 			UIPaddingCloseUI_1.Name = "UIPaddingCloseUI"
 			UIPaddingCloseUI_1.Parent = CloseUIShadow
 			UIPaddingCloseUI_1.PaddingBottom = UDim.new(0,5)
@@ -4856,7 +4950,7 @@ function Library:Window(p)
 			FrameCloseUI_1.Position = UDim2.new(0, 0,1, 0)
 			FrameCloseUI_1.Size = UDim2.new(1, 0,0, 4)
 
-			-- NEW: Using ImageLabel instead of TextLabel for close button
+			-- Auto-detect Asset ID from CloseUIButton.ID
 			local CloseIcon_1 = Instance.new("ImageLabel")
 			CloseIcon_1.Name = "CloseIcon"
 			CloseIcon_1.Parent = BackgroundCloseUI_1
@@ -4864,12 +4958,34 @@ function Library:Window(p)
 			CloseIcon_1.BackgroundTransparency = 1
 			CloseIcon_1.Position = UDim2.new(0.5, 0, 0.5, 0)
 			CloseIcon_1.Size = UDim2.new(0, 24, 0, 24)
-			CloseIcon_1.Image = "rbxassetid://3926305904" -- X close icon (you can change this asset ID)
+			
+			-- Auto-set image from ID parameter
+			if CloseUI.ID and CloseUI.ID ~= "" then
+				CloseIcon_1.Image = "rbxassetid://" .. CloseUI.ID
+			else
+				CloseIcon_1.Image = "rbxassetid://3926305904" -- Default X close icon
+			end
+			
 			CloseIcon_1.ImageColor3 = Color3.fromRGB(255, 255, 255)
+			
+			-- Add gradient to CloseUI Icon
+			local CloseIconGradient = Instance.new("UIGradient")
+			CloseIconGradient.Name = "CloseIconGradient"
+			CloseIconGradient.Parent = CloseIcon_1
+			CloseIconGradient.Rotation = 90
+			addToTheme('Icon Gradient', CloseIconGradient, 'Color')
 			
 			addToTheme('Text & Icon', CloseIcon_1)
 
 			CloseUIShadow.Size = UDim2.new(0, 50, 0, 50) -- Square size for icon button
+
+			-- Add hover effect to CloseUI button
+			CloseIcon_1.MouseEnter:Connect(function()
+				tw({v = CloseIcon_1, t = 0.2, s = Enum.EasingStyle.Quad, d = "Out", g = {ImageColor3 = Color3.fromRGB(255, 40, 40)}}):Play()
+			end)
+			CloseIcon_1.MouseLeave:Connect(function()
+				tw({v = CloseIcon_1, t = 0.2, s = Enum.EasingStyle.Quad, d = "Out", g = {ImageColor3 = Color3.fromRGB(255, 255, 255)}}):Play()
+			end)
 
 			local Click = click(CloseUIShadow)
 			lak(Click, CloseUIShadow)
