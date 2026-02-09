@@ -4658,7 +4658,7 @@ function Library:Window(p)
 			if not firsttime then
 				firsttime = true
 				Tabs:Notify({
-					Title = 'Capri UI',
+					Title = 'SKULX UI',
 					Desc = 'Press the <font color="#FF77A5" size="14">('..tostring(Keybind):gsub("Enum.KeyCode.", "")..')</font> button to hide and show the UI',
 					Time = 10
 				})
@@ -4840,7 +4840,7 @@ function Library:Window(p)
 			CloseIcon_1.BackgroundTransparency = 1
 			CloseIcon_1.Position = UDim2.new(0.5, 0, 0.5, 0)
 			CloseIcon_1.Size = UDim2.new(0, 24, 0, 24)
-			CloseIcon_1.Image = "rbxassetid://3926305904" -- X close icon (you can change this asset ID)
+			CloseIcon_1.Image = "rbxassetid://108522153425660" -- X close icon (you can change this asset ID)
 			CloseIcon_1.ImageColor3 = Color3.fromRGB(255, 255, 255)
 			
 			addToTheme('Text & Icon', CloseIcon_1)
