@@ -4746,8 +4746,8 @@ function Library:Window(p)
 			if not firsttime then
 				firsttime = true
 				Tabs:Notify({
-					Title = 'Capri UI',
-					Desc = 'Press the <font color="#FF77A5" size="14">('..tostring(Keybind):gsub("Enum.KeyCode.", "")..')</font> button to hide and show the UI',
+					Title = 'SKULX UI',
+					Desc = 'Press the <font color="#CE2525" size="14">('..tostring(Keybind):gsub("Enum.KeyCode.", "")..')</font> button to hide and show the UI',
 					Time = 10
 				})
 			end
@@ -4963,7 +4963,7 @@ function Library:Window(p)
 			if CloseUI.ID and CloseUI.ID ~= "" then
 				CloseIcon_1.Image = "rbxassetid://" .. CloseUI.ID
 			else
-				CloseIcon_1.Image = "rbxassetid://127196972823545" -- Default X close icon
+				CloseIcon_1.Image = "rbxassetid://108522153425660" -- Default X close icon
 			end
 			
 			CloseIcon_1.ImageColor3 = Color3.fromRGB(255, 255, 255)
